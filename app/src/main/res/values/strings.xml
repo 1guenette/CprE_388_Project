@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">CprE_388_Project</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_scanner">ScannerActivity</string>
+    <string name="title_activity_qrgen">QRgenActivity</string>
+    <string name="emptyEmail">(emptyEmail)</string>
+    <string name="todo">TODO</string>
+    <string name="qrMessage">Message</string>
+    <string name="scanTitle">Scan</string>
+    <string name="usernameDefault">Username</string>
+</resources>
