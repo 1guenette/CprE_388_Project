@@ -5,9 +5,12 @@
     <string name="title_notifications">Notifications</string>
     <string name="title_activity_scanner">ScannerActivity</string>
     <string name="title_activity_qrgen">QRgenActivity</string>
-    <string name="emptyEmail">(emptyEmail)</string>
+    <string name="emptyEmail">(No email address)</string>
+    <string name="emptyWebsite">(No website)</string>
+    <string name="emptyNickname">(No nickname)</string>
     <string name="todo">TODO</string>
     <string name="qrMessage">Message</string>
     <string name="scanTitle">Scan</string>
     <string name="usernameDefault">Username</string>
+    <string name="editProfileText">Edit Profile</string>
 </resources>

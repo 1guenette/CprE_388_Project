@@ -43,6 +43,25 @@
             android:layout_height="wrap_content"
             android:text="@string/emptyEmail" />
 
+        <CheckBox
+            android:id="@+id/website"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/emptyWebsite" />
+
+        <CheckBox
+            android:id="@+id/nickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/emptyNickname" />
+
+        <Button
+            android:id="@+id/editProfileButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onEditProfileClick"
+            android:text="@string/editProfileText" />
+
     </LinearLayout>
 
     <android.support.design.widget.BottomNavigationView

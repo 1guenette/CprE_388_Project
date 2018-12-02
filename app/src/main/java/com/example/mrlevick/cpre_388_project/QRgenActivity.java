@@ -22,6 +22,7 @@ import org.json.JSONObject;
 public class QRgenActivity extends AppCompatActivity {
 
     private TextView mTextMessage;
+    private ImageView qrImage;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -44,7 +45,6 @@ public class QRgenActivity extends AppCompatActivity {
         }
     };
 
-    private ImageView qrImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +61,8 @@ public class QRgenActivity extends AppCompatActivity {
         String name = i.getStringExtra("name");
         String number = i.getStringExtra("number");
         String email = i.getStringExtra("email");
+        String website = i.getStringExtra("website");
+        String nickname = i.getStringExtra("nickname");
 
         JSONObject json = new JSONObject();
 
@@ -68,6 +70,8 @@ public class QRgenActivity extends AppCompatActivity {
             json.put("name", name);
             json.put("number", number);
             json.put("email", email);
+            json.put("website", website);
+            json.put("nickname", nickname);
         } catch (JSONException e) {
             e.printStackTrace();
         }
