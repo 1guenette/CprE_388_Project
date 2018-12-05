@@ -110,7 +110,26 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        //save stuff to sharedPreferences
+        SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+        String toAdd = "";
+        if(boxNumber.isChecked())
+            toAdd += "1";
+        else
+            toAdd += "0";
+        if(boxEmail.isChecked())
+            toAdd += "1";
+        else
+            toAdd += "0";
+        if(boxWebsite.isChecked())
+            toAdd += "1";
+        else
+            toAdd += "0";
+        if(boxNickname.isChecked())
+            toAdd += "1";
+        else
+            toAdd += "0";
+        editor.putString(toAdd, toAdd);
+        editor.commit();
         super.onPause();
     }
 
@@ -220,53 +239,33 @@ public class MainActivity extends AppCompatActivity {
             if (contactName != null) {
                 userNameText.setText(contactName);
             }
-            //tell user a profile must be created
-            DialogInterface.OnClickListener createProfileListener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    switch (which) {
-                        case DialogInterface.BUTTON_POSITIVE:
-                            break;
+            else {
+                //tell user a profile must be created
+                DialogInterface.OnClickListener createProfileListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                break;
+                        }
                     }
-                }
-            };
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("No user profile found. Please enter your name manually.").setPositiveButton("OK", createProfileListener).show();
+                };
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("No user profile found. Please enter your name manually.").setPositiveButton("OK", createProfileListener).show();
+            }
         }
     }
 
     //update user
     public void updateUserInfo(View v){
         SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-        String toAdd = "";
-        editor.putString("username", userNameText.getText().toString());
-        if(boxNumber.isChecked()) {
-            editor.putString("number", userPhoneText.getText().toString());
-            toAdd += "1";
-        }
-        else
-            toAdd += "0";
-        if(boxEmail.isChecked()) {
-            editor.putString("email", userEmailText.getText().toString());
-            toAdd += "1";
-        }
-        else
-            toAdd += "0";
-        if(boxWebsite.isChecked()) {
-            editor.putString("website", userWebsiteText.getText().toString());
-            toAdd += "1";
-        }
-        else
-            toAdd += "0";
-        if(boxNickname.isChecked()) {
-            editor.putString("nickname", userNicknameText.getText().toString());
-            toAdd += "1";
-        }
-        else
-            toAdd += "0";
-
-        editor.putString("toAdd", toAdd);
+        editor.putString("username", userName);
+        editor.putString("number", userPhoneText.getText().toString());
+        editor.putString("email", userEmailText.getText().toString());
+        editor.putString("website", userWebsiteText.getText().toString());
+        editor.putString("nickname", userNicknameText.getText().toString());
         editor.putString("profileExists", "Profile Exists");
         editor.apply();
+        Toast.makeText(this, "Profile Saved!", Toast.LENGTH_SHORT).show();
     }
 }
