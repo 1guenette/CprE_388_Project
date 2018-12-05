@@ -1,17 +1,13 @@
 package com.example.mrlevick.cpre_388_project;
 
 import android.Manifest;
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -23,11 +19,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.vision.barcode.Barcode;
-import com.journeyapps.barcodescanner.BarcodeResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,21 +32,26 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final String MY_PREFS_NAME = "UserInfo388";
     private final int CONTACTS_REQUEST = 55;
     private boolean contactPermission = false;
     private TextView mTextMessage;
     public static final int REQUEST_CODE = 100;
     public static final int PERMISSION_REQUEST = 200;
-    private String userName = "Leo Freier";
-    private String userPhone = "5554446789";
-    private String userEmail = "lmfreier@iastate.edu";
-    private String userWebsite = "leofreier.com";
-    private String userNickname = "Leo";
+    private String userName = "";
+    private String userPhone = "";
+    private String userEmail = "";
+    private String userWebsite = "";
+    private String userNickname = "";
     private CheckBox boxNumber;
     private CheckBox boxEmail;
     private CheckBox boxWebsite;
     private CheckBox boxNickname;
     private TextView userNameText;
+    private EditText userPhoneText;
+    private EditText userEmailText;
+    private EditText userWebsiteText;
+    private EditText userNicknameText;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -71,24 +72,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 case R.id.navigation_qrGen:
                     i = new Intent(MainActivity.this, QRgenActivity.class);
-                    i.putExtra("name", userName);
-
-                    if (!boxNumber.isChecked()) {
-                        userPhone = "";
-                    }
-                    if (!boxEmail.isChecked()) {
-                        userEmail = "";
-                    }
-                    if (!boxWebsite.isChecked()) {
-                        userWebsite = "";
-                    }
-                    if (!boxNickname.isChecked()) {
-                        userNickname = "";
-                    }
-                    i.putExtra("number", userPhone);
-                    i.putExtra("email", userEmail);
-                    i.putExtra("website", userWebsite);
-                    i.putExtra("nickname", userNickname);
                     startActivity(i);
                     return true;
             }
@@ -113,16 +96,20 @@ public class MainActivity extends AppCompatActivity {
         boxWebsite = findViewById(R.id.website);
         boxNickname = findViewById(R.id.nickname);
         userNameText = (TextView) findViewById(R.id.userName);
+        userPhoneText = findViewById(R.id.editPhoneText);
+        userEmailText = findViewById(R.id.editEmail);
+        userWebsiteText = findViewById(R.id.editWebsite);
+        userNicknameText = findViewById(R.id.editNickname);
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         requestContactsPermission();
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         //save stuff to sharedPreferences
         super.onPause();
     }
@@ -140,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 writeProfileIntent.setType(ContactsContract.Contacts.CONTENT_TYPE);
                 String contactName = "", contactPhone = "", contactEmail = "", contactWebsite = "", contactNickname = "";
 
-                try{
+                try {
                     readCode = new JSONObject(barcode.rawValue);
                     contactName = readCode.getString("name");
                     System.out.println("Name: " + contactName);
@@ -152,28 +139,28 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("Website: ", contactWebsite);
                     contactNickname = readCode.getString("nickname");
                     System.out.println("Nickname: " + contactNickname);
-                }catch(JSONException e){
+                } catch (JSONException e) {
                     Log.i("JSON Failure", "JSONObjet failed to create");
                 }
 
                 ArrayList<ContentValues> otherData = new ArrayList<ContentValues>();
                 ContentValues websiteRow = new ContentValues();
                 ContentValues nicknameRow = new ContentValues();
-                if(!contactName.equals("")) {
+                if (!contactName.equals("")) {
                     writeProfileIntent.putExtra(ContactsContract.Intents.Insert.NAME, contactName);
                 }
-                if(!contactPhone.equals("")) {
+                if (!contactPhone.equals("")) {
                     writeProfileIntent.putExtra(ContactsContract.Intents.Insert.PHONE, contactPhone);
                 }
-                if(!contactEmail.equals("")) {
+                if (!contactEmail.equals("")) {
                     writeProfileIntent.putExtra(ContactsContract.Intents.Insert.EMAIL, contactEmail);
                 }
-                if(!contactWebsite.equals("")) {
+                if (!contactWebsite.equals("")) {
                     websiteRow.put(ContactsContract.Contacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE);
                     websiteRow.put(ContactsContract.CommonDataKinds.Website.URL, contactWebsite);
                     otherData.add(websiteRow);
                 }
-                if(!contactNickname.equals("")) {
+                if (!contactNickname.equals("")) {
                     nicknameRow.put(ContactsContract.Contacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE);
                     nicknameRow.put(ContactsContract.CommonDataKinds.Nickname.NAME, contactNickname);
                     otherData.add(nicknameRow);
@@ -194,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //do stuff
                     contactPermission = true;
-                    retrieveUserName();
+                    retrieveUserInfo();
                 } else {
                     contactPermission = false;
                     Toast.makeText(this, "Please allow permission to read and write contacts.", Toast.LENGTH_SHORT).show();
@@ -203,32 +190,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestContactsPermission() {
-        if (checkSelfPermission(Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_DENIED || checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_DENIED ) {
+        if (checkSelfPermission(Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_DENIED || checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_DENIED) {
             String[] requiredPerm = {Manifest.permission.WRITE_CONTACTS, Manifest.permission.READ_CONTACTS};
             ActivityCompat.requestPermissions(this, requiredPerm, CONTACTS_REQUEST);
         } else {
             contactPermission = true;
-            retrieveUserName();
+            retrieveUserInfo();
         }
     }
 
-    private void retrieveUserName() {
-        String contactName = null;
-        String userId = "";
-        // querying profile name
-        Cursor cursor = getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, new String[]{}, null);
-        if (cursor.moveToFirst()) {
-            contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Profile.DISPLAY_NAME));
-//            userId = cursor.getString(cursor.getColumnIndex(ContactsContract.Profile.NAME_RAW_CONTACT_ID));
-//            cursor = getContentResolver().query(ContactsContract.RawContacts.CONTENT_URI, null,  null, null, null);
-//            cursor.moveToFirst();
-//            cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.Data.DATA1));
-
+    private void retrieveUserInfo() {
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        String restoredText = prefs.getString("profileExists", null);
+        if (restoredText != null) {
+            userNameText.setText(userName = prefs.getString("username", ""));
+            userPhoneText.setText(userPhone = prefs.getString("number", ""));
+            userEmailText.setText(userEmail = prefs.getString("email", ""));
+            userWebsiteText.setText(userWebsite = prefs.getString("website", ""));
+            userNicknameText.setText(userNickname = prefs.getString("nickname", ""));
         }
-        if(true){
-            //get sharedpreferences
-        }
-        else {
+        else{
+            String contactName = null;
+            // querying profile name
+            Cursor cursor = getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, new String[]{}, null);
+            if (cursor.moveToFirst()) {
+                contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Profile.DISPLAY_NAME));
+            }
+            cursor.close();
+            if (contactName != null) {
+                userNameText.setText(contactName);
+            }
             //tell user a profile must be created
             DialogInterface.OnClickListener createProfileListener = new DialogInterface.OnClickListener() {
                 @Override
@@ -242,10 +233,40 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("No user profile found. Please enter your name manually.").setPositiveButton("OK", createProfileListener).show();
         }
-        cursor.close();
-        if (contactName != null) {
-            userNameText.setText(contactName);
-        }
+    }
 
+    //update user
+    public void updateUserInfo(View v){
+        SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+        String toAdd = "";
+        editor.putString("username", userNameText.getText().toString());
+        if(boxNumber.isChecked()) {
+            editor.putString("number", userPhoneText.getText().toString());
+            toAdd += "1";
+        }
+        else
+            toAdd += "0";
+        if(boxEmail.isChecked()) {
+            editor.putString("email", userEmailText.getText().toString());
+            toAdd += "1";
+        }
+        else
+            toAdd += "0";
+        if(boxWebsite.isChecked()) {
+            editor.putString("website", userWebsiteText.getText().toString());
+            toAdd += "1";
+        }
+        else
+            toAdd += "0";
+        if(boxNickname.isChecked()) {
+            editor.putString("nickname", userNicknameText.getText().toString());
+            toAdd += "1";
+        }
+        else
+            toAdd += "0";
+
+        editor.putString("toAdd", toAdd);
+        editor.putString("profileExists", "Profile Exists");
+        editor.apply();
     }
 }

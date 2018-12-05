@@ -1,6 +1,7 @@
 package com.example.mrlevick.cpre_388_project;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,6 +22,7 @@ import org.json.JSONObject;
 
 public class QRgenActivity extends AppCompatActivity {
 
+    private final String MY_PREFS_NAME = "UserInfo388";
     private TextView mTextMessage;
     private ImageView qrImage;
 
@@ -58,11 +60,19 @@ public class QRgenActivity extends AppCompatActivity {
         //Generate QR code
         qrImage = findViewById(R.id.imageView);
         Intent i = getIntent();
-        String name = i.getStringExtra("name");
-        String number = i.getStringExtra("number");
-        String email = i.getStringExtra("email");
-        String website = i.getStringExtra("website");
-        String nickname = i.getStringExtra("nickname");
+        SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        String toAdd = prefs.getString("toAdd", "0000");
+        String name = prefs.getString("username", "");
+        String number = "", email = "", website = "", nickname = "";
+
+        if(toAdd.substring(0,1).equals("1"))
+            number = prefs.getString("number", "");
+        if(toAdd.substring(1,2).equals("1"))
+            email = prefs.getString("email", "");
+        if(toAdd.substring(2,3).equals("1"))
+            website = prefs.getString("website", "");
+        if(toAdd.substring(3,4).equals("1"))
+            nickname = prefs.getString("nickname", "");
 
         JSONObject json = new JSONObject();
 
