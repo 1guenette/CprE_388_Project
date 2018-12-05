@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
     //update user
     public void updateUserInfo(View v){
         SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-        editor.putString("username", userName);
+        editor.putString("username", userNameText.getText().toString());
         editor.putString("number", userPhoneText.getText().toString());
         editor.putString("email", userEmailText.getText().toString());
         editor.putString("website", userWebsiteText.getText().toString());
