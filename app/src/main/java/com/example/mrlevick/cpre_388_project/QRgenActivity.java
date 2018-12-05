@@ -61,7 +61,7 @@ public class QRgenActivity extends AppCompatActivity {
         qrImage = findViewById(R.id.imageView);
         Intent i = getIntent();
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        String toAdd = prefs.getString("toAdd", "0000");
+        String toAdd = prefs.getString("toAddKey", "0000");
         String name = prefs.getString("username", "");
         String number = "", email = "", website = "", nickname = "";
 

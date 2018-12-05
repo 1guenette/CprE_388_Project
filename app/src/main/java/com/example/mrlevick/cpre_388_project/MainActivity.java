@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
             toAdd += "1";
         else
             toAdd += "0";
-        editor.putString(toAdd, toAdd);
+        editor.putString("toAddKey", toAdd);
         editor.commit();
         super.onPause();
     }
