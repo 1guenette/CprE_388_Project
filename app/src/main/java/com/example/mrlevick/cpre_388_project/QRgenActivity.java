@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -26,7 +25,7 @@ public class QRgenActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private ImageView qrImage;
 
-    /**Navigation bar listener*/
+    /**Navigation bar listener, navigates to activity based on which icon is pressed*/
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override

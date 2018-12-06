@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
-
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -27,7 +26,7 @@ public class ScannerActivity extends AppCompatActivity {
     CameraSource cameraSource;
     SurfaceHolder holder;
 
-    /*Navigation bar listener */
+    /**Navigation bar listener */
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
@@ -49,7 +48,7 @@ public class ScannerActivity extends AppCompatActivity {
         }
     };
 
-    /*When ScannerActivity is created, navigate, use camera to scan for a QR code*/
+    /**When ScannerActivity is created, navigate, use camera to scan for a QR code*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +78,7 @@ public class ScannerActivity extends AppCompatActivity {
 
         /*Creates Camera view and sets callback when camera detects QR code*/
         cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            /**Creates camera view if having camera permissions*/
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
                 try{
@@ -110,7 +110,7 @@ public class ScannerActivity extends AppCompatActivity {
 
             }
 
-            /*When camera detects QR code, it sends QR code information back in an Intent*/
+            /**When camera detects QR code, it sends QR code information back in an Intent*/
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
