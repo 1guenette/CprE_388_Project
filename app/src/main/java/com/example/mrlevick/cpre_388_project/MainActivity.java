@@ -22,14 +22,13 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.vision.barcode.Barcode;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 
+/**MainActivity page is used for the user to filter and update their information before sharing it
+ * */
 public class MainActivity extends AppCompatActivity {
 
     private final String MY_PREFS_NAME = "UserInfo388";
@@ -53,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText userWebsiteText;
     private EditText userNicknameText;
 
+    /**Navigation Bar listens for user input and starts corresponding activity
+     * */
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
@@ -79,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * On creation of the main page,
+     * */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,12 +106,14 @@ public class MainActivity extends AppCompatActivity {
         userNicknameText = findViewById(R.id.editNickname);
     }
 
+    /**Get permissions when when resuming activity*/
     @Override
     protected void onResume() {
         super.onResume();
         requestContactsPermission();
     }
 
+    /**When leaving the MainActivity page, save what the users checked in a SharedPreferences object, used for generating the QR code*/
     @Override
     protected void onPause() {
         SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
@@ -133,19 +139,26 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    /**
+     * Returns to MainActivity page after a QR code is scanned and passed through an intent.
+     * JSON data is pulled from the intent and written into the contacts application
+     * */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
             if (data != null) {
+                //get QR data from intent
                 Barcode barcode = data.getParcelableExtra("qrCode");
                 Log.i("Success", "GOT QR Code: " + barcode.displayValue);
                 Toast.makeText(getApplicationContext(), "GOT QR DATA: " + barcode.displayValue, Toast.LENGTH_SHORT).show();
                 JSONObject readCode = null;
 
+                //Create intent to write into contacts application
                 Intent writeProfileIntent = new Intent(Intent.ACTION_INSERT);
                 writeProfileIntent.setType(ContactsContract.Contacts.CONTENT_TYPE);
                 String contactName = "", contactPhone = "", contactEmail = "", contactWebsite = "", contactNickname = "";
 
+                //Pull JSON data from intent
                 try {
                     readCode = new JSONObject(barcode.rawValue);
                     contactName = readCode.getString("name");
@@ -162,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("JSON Failure", "JSONObjet failed to create");
                 }
 
+                //Put contact information in intent for Contacts Application
                 ArrayList<ContentValues> otherData = new ArrayList<ContentValues>();
                 ContentValues websiteRow = new ContentValues();
                 ContentValues nicknameRow = new ContentValues();
@@ -191,7 +205,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
+    /**
+     * If granted permissions to contact application, application retrieves contact's name saved in the contact application
+     * otherwise it informs them that the app needs permissions to read and write to contacts
+     * */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
@@ -208,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**Get Permissions to read and write to contact application*/
     private void requestContactsPermission() {
         if (checkSelfPermission(Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_DENIED || checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_DENIED) {
             String[] requiredPerm = {Manifest.permission.WRITE_CONTACTS, Manifest.permission.READ_CONTACTS};
@@ -218,6 +236,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Fills MainActivity page with user's contact information that was initially saved in SharedPreferences,
+     * or informs user to input and save their information.
+     * */
     private void retrieveUserInfo() {
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
         String restoredText = prefs.getString("profileExists", null);
@@ -228,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
             userWebsiteText.setText(userWebsite = prefs.getString("website", ""));
             userNicknameText.setText(userNickname = prefs.getString("nickname", ""));
         }
-        else{
+        else{//if profile does not exist, pull name
             String contactName = null;
             // querying profile name
             Cursor cursor = getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, new String[]{}, null);
@@ -256,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //update user
+    /**Updates the user's contact information*/
     public void updateUserInfo(View v){
         SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
         editor.putString("username", userNameText.getText().toString());

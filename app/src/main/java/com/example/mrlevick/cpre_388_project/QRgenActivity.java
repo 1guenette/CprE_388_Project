@@ -26,6 +26,7 @@ public class QRgenActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private ImageView qrImage;
 
+    /**Navigation bar listener*/
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
@@ -47,6 +48,7 @@ public class QRgenActivity extends AppCompatActivity {
         }
     };
 
+    /**Generates and displays QR code stored with user's contact information*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,14 +59,17 @@ public class QRgenActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         mTextMessage.setText(R.string.qrMessage);
 
-        //Generate QR code
+        /*Generate QR code*/
         qrImage = findViewById(R.id.imageView);
         Intent i = getIntent();
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+
+       /* get preference key that tells what information to store in QR code*/
         String toAdd = prefs.getString("toAddKey", "0000");
         String name = prefs.getString("username", "");
         String number = "", email = "", website = "", nickname = "";
 
+        /*Get profile information to store in QR code */
         if(toAdd.substring(0,1).equals("1"))
             number = prefs.getString("number", "");
         if(toAdd.substring(1,2).equals("1"))
@@ -74,8 +79,8 @@ public class QRgenActivity extends AppCompatActivity {
         if(toAdd.substring(3,4).equals("1"))
             nickname = prefs.getString("nickname", "");
 
+        /*Store contact information into JSON object*/
         JSONObject json = new JSONObject();
-
         try {
             json.put("name", name);
             json.put("number", number);
@@ -86,6 +91,7 @@ public class QRgenActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        /*Write JSON information into bitmap that generates the QR code*/
         MultiFormatWriter mWriter = new MultiFormatWriter();
         try {
             BitMatrix bitMatrix = mWriter.encode(json.toString(), BarcodeFormat.QR_CODE, 500,500);

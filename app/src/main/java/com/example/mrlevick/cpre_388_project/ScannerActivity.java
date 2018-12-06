@@ -27,6 +27,7 @@ public class ScannerActivity extends AppCompatActivity {
     CameraSource cameraSource;
     SurfaceHolder holder;
 
+    /*Navigation bar listener */
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
@@ -48,24 +49,27 @@ public class ScannerActivity extends AppCompatActivity {
         }
     };
 
+    /*When ScannerActivity is created, navigate, use camera to scan for a QR code*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanner);
-
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        /*Create Camera view*/
         cameraView = (SurfaceView) findViewById(R.id.cameraView);
         cameraView.setZOrderMediaOverlay(true);
         holder = cameraView.getHolder();
+
+        /*Create barcode detector set to scan for QR codes, which the camera view will implement*/
         barcode = new BarcodeDetector.Builder(this).setBarcodeFormats(Barcode.QR_CODE).build();
         if(!barcode.isOperational())
         {
             Toast.makeText(getApplicationContext(), "Sorry, couldn't setup", Toast.LENGTH_SHORT).show();
-
         }
 
+        /*Set camera view to scan to implement barcode detector and set display information*/
         cameraSource = new CameraSource.Builder(this, barcode)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setRequestedFps(24)
@@ -73,6 +77,7 @@ public class ScannerActivity extends AppCompatActivity {
                 .setRequestedPreviewSize(1020, 1020)
                 .build();
 
+        /*Creates Camera view and sets callback when camera detects QR code*/
         cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
@@ -105,6 +110,7 @@ public class ScannerActivity extends AppCompatActivity {
 
             }
 
+            /*When camera detects QR code, it sends QR code information back in an Intent*/
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
