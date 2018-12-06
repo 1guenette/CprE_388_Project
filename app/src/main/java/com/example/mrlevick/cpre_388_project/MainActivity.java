@@ -27,7 +27,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 
-/**MainActivity page is used for the user to filter and update their information before sharing it
+/**@author: Sam Guenette
+ * @author: Leo Freier
+ * MainActivity page is used for the user to filter and update their information before sharing it
  * */
 public class MainActivity extends AppCompatActivity {
 
@@ -52,10 +54,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText userWebsiteText;
     private EditText userNicknameText;
 
-    /**Navigation Bar listens for user input and starts corresponding activity
-     * */
+    /**Navigation bar listener, navigates to activity based on which icon is pressed*/
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             Intent i;
@@ -88,10 +88,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        //mTextMessage.setText(R.string.us);
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST);
         }

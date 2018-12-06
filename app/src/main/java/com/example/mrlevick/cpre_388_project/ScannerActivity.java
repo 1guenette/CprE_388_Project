@@ -23,10 +23,10 @@ public class ScannerActivity extends AppCompatActivity {
 
     SurfaceView cameraView;
     BarcodeDetector barcode;
-    CameraSource cameraSource;
+    CameraSource camera;
     SurfaceHolder holder;
 
-    /**Navigation bar listener */
+    /**Navigation bar listener, navigates to activity based on which icon is pressed*/
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
@@ -69,7 +69,7 @@ public class ScannerActivity extends AppCompatActivity {
         }
 
         /*Set camera view to scan to implement barcode detector and set display information*/
-        cameraSource = new CameraSource.Builder(this, barcode)
+        camera = new CameraSource.Builder(this, barcode)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setRequestedFps(24)
                 .setAutoFocusEnabled(true)
@@ -84,7 +84,7 @@ public class ScannerActivity extends AppCompatActivity {
                 try{
                     if(ContextCompat.checkSelfPermission(ScannerActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
                     {
-                        cameraSource.start(cameraView.getHolder());
+                        camera.start(cameraView.getHolder());
                     }
 
                 }catch (Exception e)
