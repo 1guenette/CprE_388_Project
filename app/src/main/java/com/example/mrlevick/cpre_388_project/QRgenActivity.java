@@ -89,8 +89,8 @@ public class QRgenActivity extends AppCompatActivity {
         MultiFormatWriter mWriter = new MultiFormatWriter();
         try {
             BitMatrix bitMatrix = mWriter.encode(json.toString(), BarcodeFormat.QR_CODE, 500,500);
-            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+            BarcodeEncoder encoder = new BarcodeEncoder();
+            Bitmap bitmap = encoder.createBitmap(bitMatrix);
             qrImage.setImageBitmap(bitmap);
         } catch (WriterException e) {
             e.printStackTrace();
